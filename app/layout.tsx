@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/src/theme/ThemeProvider";
+import clsx from "clsx";
+import Header from "@/src/features/layout/Header";
+import Footer from "@/src/features/layout/Footer";
+import { SessionProvider } from "next-auth/react";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,12 +17,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  session,
 }: Readonly<{
   children: React.ReactNode;
+  session: any;
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={clsx(inter.className, "bg-background h-full")}>
+        <SessionProviderWrapper session={session}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="flex flex-col h-full">
+              <Header />
+              <div className="flex-1 mt-4 max-w-xl m-auto py-12 w-full">
+                {children}
+              </div>
+              <Footer />
+            </div>
+          </ThemeProvider>
+        </SessionProviderWrapper>
+      </body>
     </html>
   );
 }
